@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+option go_package = "github.com/Dadard29/music-researcher/musicresearcher";
+
+package musicresearcher;
+
+service MusicResearcher {
+    rpc Search(Parameters) returns (Results) {}
+    rpc GetGenreList(Empty) returns (GenreList) {}
+}
+
+message Empty {}
+
+message GenreList {
+    repeated string Genres = 1;
+}
+
+message Parameters {
+    string query = 1;
+    repeated string genreFilters = 2;
+}
+
+enum Type {
+    UNKNOWN = 0;
+    ARTIST = 1;
+    ALBUM = 2;
+    TRACK = 3;
+}
+
+message Results {
+    repeated Album albums = 1;
+    repeated Artist artists = 2;
+    repeated Track tracks = 3;
+}
+
+message Artist {
+    string name = 1;
+    string spotifyUrl = 2;
+    string imageUrl = 3;
+    repeated string  genres = 4;
+}
+
+message Album {
+    string name = 1;
+    string spotifyUrl = 2;
+    string imageUrl = 3;
+    string releaseDate = 4;
+}
+
+message Track {
+    string name = 1;
+    string spotifyUrl = 2;
+
+    Album album = 3;
+    repeated Artist artists = 4;
+
+    int32 durationMs = 5;
+    string previewUrl = 6;
+    int32 popularity = 7;    
+}
+
