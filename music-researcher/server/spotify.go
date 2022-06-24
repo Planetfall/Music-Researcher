@@ -22,19 +22,9 @@ func (s *server) setSpotifyClient(ctx context.Context) error {
 	// current token expired, refreshing...
 	log.Println("refreshing spotify client...")
 
-	clientId, err := s.getSecret(spotifyClientID)
-	if err != nil {
-		return fmt.Errorf("failed to get client ID: %v", err)
-	}
-
-	clientSecret, err := s.getSecret(spotifyClientSecret)
-	if err != nil {
-		return fmt.Errorf("failed to get client secret: %v", err)
-	}
-
 	oauthConfig := clientcredentials.Config{
-		ClientID:     clientId,
-		ClientSecret: clientSecret,
+		ClientID:     s.spotifyClientID,
+		ClientSecret: s.spotifyClientSecret,
 		TokenURL:     endpoints.Spotify.TokenURL,
 	}
 

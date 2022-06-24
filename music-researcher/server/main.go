@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"net/http"
 	"os"
 
+	"cloud.google.com/go/compute/metadata"
 	"cloud.google.com/go/errorreporting"
 	secretmanager "cloud.google.com/go/secretmanager/apiv1"
 	"github.com/zmb3/spotify/v2"
 	"golang.org/x/oauth2"
-	secretmanagerpb "google.golang.org/genproto/googleapis/cloud/secretmanager/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/xds"
@@ -19,38 +20,19 @@ import (
 	pb "github.com/Dadard29/planetfall/music-researcher/musicresearcher"
 )
 
-const (
-	spotifyClientID     = "SPOTIFY_CLIENT_ID"
-	spotifyClientSecret = "SPOTIFY_CLIENT_SECRET"
-)
-
-var projectID = os.Getenv("PROJECT_ID")
-var serviceName = os.Getenv("SERVICE")
-
 type server struct {
 	pb.UnimplementedMusicResearcherServer
+	metadataClient *metadata.Client
+	projectID      string
+	serviceName    string
 
 	secretManager  *secretmanager.Client
 	errorReporting *errorreporting.Client
 
-	spotifyClient *spotify.Client
-	spotifyToken  *oauth2.Token
-}
-
-func (s *server) getSecret(secretName string) (string, error) {
-	ctx := context.Background()
-
-	secretPath := fmt.Sprintf("projects/%s/secrets/%s/versions/latest", projectID, secretName)
-
-	req := &secretmanagerpb.AccessSecretVersionRequest{
-		Name: secretPath,
-	}
-
-	result, err := s.secretManager.AccessSecretVersion(ctx, req)
-	if err != nil {
-		return "", fmt.Errorf("failed to access secret version: %v", err)
-	}
-	return string(result.Payload.Data), nil
+	spotifyClient       *spotify.Client
+	spotifyToken        *oauth2.Token
+	spotifyClientID     string
+	spotifyClientSecret string
 }
 
 func (s *server) errorReport(err error, message string) {
@@ -69,6 +51,19 @@ func (s *server) close() {
 func newServer() (*server, error) {
 	ctx := context.Background()
 
+	var (
+		serviceName         = os.Getenv("K_SERVICE")
+		spotifyClientID     = os.Getenv("SPOTIFY_CLIENT_ID")
+		spotifyClientSecret = os.Getenv("SPOTIFY_CLIENT_SECRET")
+	)
+
+	// init metadata client
+	metadataClient := metadata.NewClient(&http.Client{})
+	projectID, err := metadataClient.ProjectID()
+	if err != nil {
+		return nil, err
+	}
+
 	// init secret manager
 	secretManager, err := secretmanager.NewClient(ctx)
 	if err != nil {
@@ -85,12 +80,19 @@ func newServer() (*server, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to create error reporting: %v", err)
 	}
+
 	return &server{
+		metadataClient: metadataClient,
+		projectID:      projectID,
+		serviceName:    serviceName,
+
 		secretManager:  secretManager,
 		errorReporting: errorReporting,
 
-		spotifyClient: nil,
-		spotifyToken:  nil,
+		spotifyClient:       nil,
+		spotifyToken:        nil,
+		spotifyClientID:     spotifyClientID,
+		spotifyClientSecret: spotifyClientSecret,
 	}, nil
 }
 
