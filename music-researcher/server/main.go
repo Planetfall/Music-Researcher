@@ -14,8 +14,6 @@ import (
 	"github.com/zmb3/spotify/v2"
 	"golang.org/x/oauth2"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/xds"
 
 	pb "github.com/Dadard29/planetfall/music-researcher/musicresearcher"
 )
@@ -107,8 +105,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	creds := insecure.NewCredentials()
-	musicResearcherServer := xds.NewGRPCServer(grpc.Creds(creds))
+	musicResearcherServer := grpc.NewServer()
 
 	serv, err := newServer()
 	if err != nil {
