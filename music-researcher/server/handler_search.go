@@ -69,11 +69,15 @@ func (s *server) Search(ctx context.Context, params *pb.Parameters) (*pb.Results
 	}
 
 	query := params.Query
-	genreFilters := ""
-	for _, genre := range params.GenreFilters {
-		genreFilters = fmt.Sprintf("%s genre:%s", genreFilters, genre)
+	queryWithFilters := query
+
+	if len(params.GenreFilters) > 0 {
+		genreFilters := ""
+		for _, genre := range params.GenreFilters {
+			genreFilters = fmt.Sprintf("%s genre:%s", genreFilters, genre)
+		}
+		queryWithFilters = fmt.Sprintf("%s %s", query, genreFilters)
 	}
-	queryWithFilters := fmt.Sprintf("%s %s", query, genreFilters)
 	log.Printf("requesting Spotify with query: %s", queryWithFilters)
 
 	limit := int(params.Limit)

@@ -55,5 +55,6 @@ func main() {
 	}
 
 	log.Println(r)
+	log.Println(len(r.Tracks))
 
 }
