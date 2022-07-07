@@ -18,6 +18,7 @@ message GenreList {
 message Parameters {
     string query = 1;
     repeated string genreFilters = 2;
+    int32 limit = 3;
 }
 
 enum Type {

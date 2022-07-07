@@ -68,15 +68,16 @@ func (s *server) Search(ctx context.Context, params *pb.Parameters) (*pb.Results
 		return nil, err
 	}
 
-	queryParam := params.Query
+	query := params.Query
 	genreFilters := ""
 	for _, genre := range params.GenreFilters {
 		genreFilters = fmt.Sprintf("%s genre:%s", genreFilters, genre)
 	}
-	queryWithFilters := fmt.Sprintf("%s %s", queryParam, genreFilters)
-
+	queryWithFilters := fmt.Sprintf("%s %s", query, genreFilters)
 	log.Printf("requesting Spotify with query: %s", queryWithFilters)
-	searchResult, err := s.spotifyClient.Search(ctx, queryWithFilters, spotify.SearchTypeTrack)
+
+	limit := int(params.Limit)
+	searchResult, err := s.spotifyClient.Search(ctx, queryWithFilters, spotify.SearchTypeTrack, spotify.Limit(limit))
 	if err != nil {
 		s.errorReport(err, "failed interacting with Spotify")
 		return nil, err
