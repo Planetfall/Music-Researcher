@@ -7,6 +7,6 @@ RUN go mod download && go mod verify
 RUN apk add git
 
 COPY . .
-RUN go build -v -o /usr/local/bin/app ./music-researcher/server
+RUN go build -v -o /usr/local/bin/app ./server
 
 CMD ["app"]

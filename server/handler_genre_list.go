@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 
-	pb "github.com/Dadard29/planetfall/music-researcher/musicresearcher"
+	pb "github.com/Dadard29/planetfall/musicresearcher"
 )
 
 func (s *server) GetGenreList(ctx context.Context, empty *pb.Empty) (*pb.GenreList, error) {

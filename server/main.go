@@ -15,7 +15,7 @@ import (
 	"golang.org/x/oauth2"
 	"google.golang.org/grpc"
 
-	pb "github.com/Dadard29/planetfall/music-researcher/musicresearcher"
+	pb "github.com/Dadard29/planetfall/musicresearcher"
 )
 
 type server struct {
@@ -56,6 +56,7 @@ func newServer() (*server, error) {
 	)
 
 	// init metadata client
+	log.Println("initializing metadata client...")
 	metadataClient := metadata.NewClient(&http.Client{})
 	projectID, err := metadataClient.ProjectID()
 	if err != nil {
@@ -63,12 +64,14 @@ func newServer() (*server, error) {
 	}
 
 	// init secret manager
+	log.Println("initializing secret manager...")
 	secretManager, err := secretmanager.NewClient(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create secretmanager client: %v", err)
 	}
 
 	// init error reporting
+	log.Println("initializing error reporting...")
 	errorReporting, err := errorreporting.NewClient(ctx, projectID, errorreporting.Config{
 		ServiceName: serviceName,
 		OnError: func(err error) {
@@ -107,6 +110,7 @@ func main() {
 	}
 	musicResearcherServer := grpc.NewServer()
 
+	log.Println("initializing server...")
 	serv, err := newServer()
 	if err != nil {
 		log.Fatal(err)
@@ -116,6 +120,7 @@ func main() {
 
 	pb.RegisterMusicResearcherServer(musicResearcherServer, serv)
 
+	log.Printf("listening on %s\n...", musicResearcherPort)
 	if err := musicResearcherServer.Serve(lis); err != nil {
 		log.Fatal(err)
 	}

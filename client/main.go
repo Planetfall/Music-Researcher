@@ -8,19 +8,18 @@ import (
 	"log"
 	"time"
 
-	pb "github.com/Dadard29/planetfall/music-researcher/musicresearcher"
+	pb "github.com/Dadard29/planetfall/musicresearcher"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
 
 var query = flag.String("query", "chilly gonzales", "The query to send")
 var genre = flag.String("genre", "", "The genre to filter")
+var host = flag.String("host", "music-researcher-twecq3u42q-ew.a.run.app:443", "The service's host")
 
 func main() {
 	flag.Parse()
-	log.Println(*query, *genre)
-
-	host := "music-researcher-twecq3u42q-ew.a.run.app:443"
+	log.Println(*host, *query, *genre)
 
 	var opts []grpc.DialOption
 	systemRoots, err := x509.SystemCertPool()
@@ -34,7 +33,7 @@ func main() {
 	})
 	opts = append(opts, grpc.WithTransportCredentials(cred))
 
-	conn, err := grpc.Dial(host, opts...)
+	conn, err := grpc.Dial(*host, opts...)
 	if err != nil {
 		log.Fatal(err)
 	}
