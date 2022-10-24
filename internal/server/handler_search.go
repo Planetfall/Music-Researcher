@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"context"
@@ -9,7 +9,7 @@ import (
 	"github.com/zmb3/spotify/v2"
 )
 
-func (s *server) listArtistsFromTrack(ctx context.Context, track spotify.FullTrack,
+func (s *Server) listArtistsFromTrack(ctx context.Context, track spotify.FullTrack,
 	artistBufferList []spotify.FullArtist) ([]spotify.FullArtist, error) {
 
 	out := make([]spotify.FullArtist, 0)
@@ -37,7 +37,7 @@ func (s *server) listArtistsFromTrack(ctx context.Context, track spotify.FullTra
 	return out, nil
 }
 
-func (s *server) pagesToTrackList(ctx context.Context, pages *spotify.FullTrackPage) ([]*pb.Track, error) {
+func (s *Server) pagesToTrackList(ctx context.Context, pages *spotify.FullTrackPage) ([]*pb.Track, error) {
 	var trackList = make([]*pb.Track, 0)
 	var artistBufferList = make([]spotify.FullArtist, 0)
 
@@ -60,7 +60,7 @@ func (s *server) pagesToTrackList(ctx context.Context, pages *spotify.FullTrackP
 	return trackList, nil
 }
 
-func (s *server) Search(ctx context.Context, params *pb.Parameters) (*pb.Results, error) {
+func (s *Server) Search(ctx context.Context, params *pb.Parameters) (*pb.Results, error) {
 
 	err := s.setSpotifyClient(ctx)
 	if err != nil {

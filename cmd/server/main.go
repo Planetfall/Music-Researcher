@@ -1,101 +1,16 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"net"
-	"net/http"
 	"os"
 
-	"cloud.google.com/go/compute/metadata"
-	"cloud.google.com/go/errorreporting"
-	secretmanager "cloud.google.com/go/secretmanager/apiv1"
-	"github.com/zmb3/spotify/v2"
-	"golang.org/x/oauth2"
+	"github.com/Dadard29/planetfall/musicresearcher/internal/server"
 	"google.golang.org/grpc"
 
 	pb "github.com/Dadard29/planetfall/musicresearcher/pkg/pb"
 )
-
-type server struct {
-	pb.UnimplementedMusicResearcherServer
-	metadataClient *metadata.Client
-	projectID      string
-	serviceName    string
-
-	secretManager  *secretmanager.Client
-	errorReporting *errorreporting.Client
-
-	spotifyClient       *spotify.Client
-	spotifyToken        *oauth2.Token
-	spotifyClientID     string
-	spotifyClientSecret string
-}
-
-func (s *server) errorReport(err error, message string) {
-	err = fmt.Errorf("%s: %v", message, err)
-	s.errorReporting.Report(errorreporting.Entry{
-		Error: err,
-	})
-	log.Println(err)
-}
-
-func (s *server) close() {
-	s.secretManager.Close()
-	s.errorReporting.Close()
-}
-
-func newServer() (*server, error) {
-	ctx := context.Background()
-
-	var (
-		serviceName         = os.Getenv("K_SERVICE")
-		spotifyClientID     = os.Getenv("SPOTIFY_CLIENT_ID")
-		spotifyClientSecret = os.Getenv("SPOTIFY_CLIENT_SECRET")
-	)
-
-	// init metadata client
-	log.Println("initializing metadata client...")
-	metadataClient := metadata.NewClient(&http.Client{})
-	projectID, err := metadataClient.ProjectID()
-	if err != nil {
-		return nil, err
-	}
-
-	// init secret manager
-	log.Println("initializing secret manager...")
-	secretManager, err := secretmanager.NewClient(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create secretmanager client: %v", err)
-	}
-
-	// init error reporting
-	log.Println("initializing error reporting...")
-	errorReporting, err := errorreporting.NewClient(ctx, projectID, errorreporting.Config{
-		ServiceName: serviceName,
-		OnError: func(err error) {
-			log.Printf("Could not log error: %v", err)
-		},
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to create error reporting: %v", err)
-	}
-
-	return &server{
-		metadataClient: metadataClient,
-		projectID:      projectID,
-		serviceName:    serviceName,
-
-		secretManager:  secretManager,
-		errorReporting: errorReporting,
-
-		spotifyClient:       nil,
-		spotifyToken:        nil,
-		spotifyClientID:     spotifyClientID,
-		spotifyClientSecret: spotifyClientSecret,
-	}, nil
-}
 
 func main() {
 	port := os.Getenv("PORT")
@@ -111,12 +26,12 @@ func main() {
 	musicResearcherServer := grpc.NewServer()
 
 	log.Println("initializing server...")
-	serv, err := newServer()
+	serv, err := server.NewServer()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	defer serv.close()
+	defer serv.Close()
 
 	pb.RegisterMusicResearcherServer(musicResearcherServer, serv)
 

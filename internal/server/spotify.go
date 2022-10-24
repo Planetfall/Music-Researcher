@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 	spotifyAuth "github.com/zmb3/spotify/v2/auth"
 )
 
-func (s *server) setSpotifyClient(ctx context.Context) error {
+func (s *Server) setSpotifyClient(ctx context.Context) error {
 	// current token is valid, no need to refresh
 	if s.spotifyToken != nil && s.spotifyToken.Expiry.After(time.Now()) {
 		return nil

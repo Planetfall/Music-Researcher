@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	pb "github.com/Dadard29/planetfall/musicresearcher/pkg/pb"
@@ -17,7 +17,7 @@ var defaultImageUrl = map[pb.Type]string{
 	pb.Type_TRACK:   "",
 }
 
-func (s *server) getImageUrl(images []spotify.Image, itemType pb.Type) string {
+func (s *Server) getImageUrl(images []spotify.Image, itemType pb.Type) string {
 	// if no image found in spotify metadatas
 	if len(images) == 0 {
 		if url, check := defaultImageUrl[itemType]; !check {
@@ -30,7 +30,7 @@ func (s *server) getImageUrl(images []spotify.Image, itemType pb.Type) string {
 	return images[0].URL
 }
 
-func (s *server) newTrack(track spotify.FullTrack, artistList []spotify.FullArtist) *pb.Track {
+func (s *Server) newTrack(track spotify.FullTrack, artistList []spotify.FullArtist) *pb.Track {
 	albumDto := &pb.Album{
 		Name:        track.Album.Name,
 		ReleaseDate: track.Album.ReleaseDate,
