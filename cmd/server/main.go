@@ -15,7 +15,7 @@ import (
 	"golang.org/x/oauth2"
 	"google.golang.org/grpc"
 
-	pb "github.com/Dadard29/planetfall/musicresearcher"
+	pb "github.com/Dadard29/planetfall/musicresearcher/pkg/pb"
 )
 
 type server struct {

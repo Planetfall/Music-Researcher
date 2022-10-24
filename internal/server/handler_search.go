@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	pb "github.com/Dadard29/planetfall/musicresearcher"
+	pb "github.com/Dadard29/planetfall/musicresearcher/pkg/pb"
 	"github.com/zmb3/spotify/v2"
 )
 

@@ -1,4 +1,4 @@
-module github.com/Dadard29/planetfall
+module github.com/Dadard29/planetfall/musicresearcher
 
 go 1.18
 

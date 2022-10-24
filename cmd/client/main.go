@@ -8,7 +8,7 @@ import (
 	"log"
 	"time"
 
-	pb "github.com/Dadard29/planetfall/musicresearcher"
+	pb "github.com/Dadard29/planetfall/musicresearcher/pkg/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
@@ -47,7 +47,7 @@ func main() {
 	r, err := c.Search(ctx, &pb.Parameters{
 		Query:        *query,
 		GenreFilters: []string{*genre},
-		Limit:        10,
+		Limit:        3,
 	})
 	if err != nil {
 		log.Fatal(err)

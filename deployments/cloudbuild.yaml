@@ -1,0 +1,32 @@
+steps:
+# Build container image
+- name: 'gcr.io/cloud-builders/docker' 
+  args:
+    - 'build'
+    - '-t'
+    - 'europe-west2-docker.pkg.dev/$PROJECT_ID/repo-docker/music-researcher:$COMMIT_SHA'
+    - '-f'
+    - './build'
+    - '.'
+
+# Push container image to registry
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+    - 'push'
+    - 'europe-west2-docker.pkg.dev/$PROJECT_ID/repo-docker/music-researcher:$COMMIT_SHA'
+
+# Deploy new revision to Cloud Run
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args:
+    - 'run'
+    - 'deploy'
+    - 'music-researcher'
+    - '--image'
+    - 'europe-west2-docker.pkg.dev/$PROJECT_ID/repo-docker/music-researcher:$COMMIT_SHA'
+    - '--region'
+    - 'europe-west1'
+
+images:
+- 'europe-west2-docker.pkg.dev/$PROJECT_ID/repo-docker/music-researcher:$COMMIT_SHA'
+
