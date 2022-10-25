@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	"cloud.google.com/go/compute/metadata"
 	"cloud.google.com/go/errorreporting"
@@ -45,14 +44,13 @@ func (s *Server) Close() {
 	s.errorReporting.Close()
 }
 
-func NewServer() (*Server, error) {
-	ctx := context.Background()
+func NewServer(
+	serviceName string,
+	spotifyClientID string,
+	spotifyClientSecret string,
+) (*Server, error) {
 
-	var (
-		serviceName         = os.Getenv("K_SERVICE")
-		spotifyClientID     = os.Getenv("SPOTIFY_CLIENT_ID")
-		spotifyClientSecret = os.Getenv("SPOTIFY_CLIENT_SECRET")
-	)
+	ctx := context.Background()
 
 	// init metadata client
 	log.Println("initializing metadata client...")

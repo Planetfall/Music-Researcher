@@ -4,19 +4,35 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"os"
 
 	"github.com/Dadard29/planetfall/musicresearcher/internal/server"
+	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 
 	pb "github.com/Dadard29/planetfall/musicresearcher/pkg/pb"
 )
 
-func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
+func mustBindEnv(envName string) {
+	viper.MustBindEnv(envName)
+	if !viper.IsSet(envName) {
+		log.Fatalf("Could not retrieve config env: %s\n", envName)
 	}
+}
+
+func setConfig() {
+	viper.SetDefault("PORT", "8080")
+	viper.SetDefault("K_SERVICE", "music-researcher")
+
+	mustBindEnv("PORT")
+	mustBindEnv("K_SERVICE")
+	mustBindEnv("SPOTIFY_CLIENT_ID")
+	mustBindEnv("SPOTIFY_CLIENT_SECRET")
+}
+
+func main() {
+	setConfig()
+
+	port := viper.GetString("PORT")
 
 	musicResearcherPort := fmt.Sprintf(":%s", port)
 	lis, err := net.Listen("tcp4", musicResearcherPort)
@@ -26,7 +42,12 @@ func main() {
 	musicResearcherServer := grpc.NewServer()
 
 	log.Println("initializing server...")
-	serv, err := server.NewServer()
+	serv, err := server.NewServer(
+		viper.GetString("K_SERVICE"),
+		viper.GetString("SPOTIFY_CLIENT_ID"),
+		viper.GetString("SPOTIFY_CLIENT_SECRET"),
+	)
+
 	if err != nil {
 		log.Fatal(err)
 	}
