@@ -32,9 +32,11 @@ type Server struct {
 
 func (s *Server) errorReport(err error, message string) {
 	err = fmt.Errorf("%s: %v", message, err)
-	s.errorReporting.Report(errorreporting.Entry{
-		Error: err,
-	})
+	if s.errorReporting != nil {
+		s.errorReporting.Report(errorreporting.Entry{
+			Error: err,
+		})
+	}
 	log.Println(err)
 }
 

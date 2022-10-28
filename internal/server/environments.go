@@ -21,6 +21,10 @@ func newServerDevelopement(
 	spotifyClientID string,
 	spotifyClientSecret string,
 ) (*Server, error) {
+	log.Printf("setting up server for %s...\n", Development)
+
+	log.SetPrefix("[DEV] ")
+
 	return &Server{
 		env:                 Development,
 		serviceName:         serviceName,
@@ -40,6 +44,9 @@ func newServerProduction(
 	spotifyClientID string,
 	spotifyClientSecret string,
 ) (*Server, error) {
+	log.Printf("setting up server for %s...\n", Production)
+
+	log.SetPrefix("[PRD] ")
 
 	ctx := context.Background()
 
