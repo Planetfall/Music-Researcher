@@ -32,7 +32,7 @@ func setConfig() {
 	mustBindEnv("SPOTIFY_CLIENT_SECRET")
 
 	// from cmd line
-	flag.String("env", server.Development, "server environment")
+	flag.String("env", server.Production, "server environment")
 	flag.Parse()
 	viper.BindPFlags(flag.CommandLine)
 }
