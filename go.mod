@@ -6,6 +6,7 @@ require (
 	cloud.google.com/go/compute v1.6.1
 	cloud.google.com/go/errorreporting v0.2.0
 	cloud.google.com/go/secretmanager v1.4.0
+	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.13.0
 	github.com/zmb3/spotify/v2 v2.2.0
 	golang.org/x/oauth2 v0.0.0-20220622183110-fd043fe589d2
@@ -29,7 +30,6 @@ require (
 	github.com/spf13/afero v1.8.2 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
-	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.4.1 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/net v0.0.0-20220520000938-2e3eb7b945c2 // indirect

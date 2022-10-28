@@ -5,6 +5,8 @@ import (
 	"log"
 	"net"
 
+	flag "github.com/spf13/pflag"
+
 	"github.com/Dadard29/planetfall/musicresearcher/internal/server"
 	"github.com/spf13/viper"
 	"google.golang.org/grpc"
@@ -20,6 +22,7 @@ func mustBindEnv(envName string) {
 }
 
 func setConfig() {
+	// from env
 	viper.SetDefault("PORT", "8080")
 	viper.SetDefault("K_SERVICE", "music-researcher")
 
@@ -27,6 +30,11 @@ func setConfig() {
 	mustBindEnv("K_SERVICE")
 	mustBindEnv("SPOTIFY_CLIENT_ID")
 	mustBindEnv("SPOTIFY_CLIENT_SECRET")
+
+	// from cmd line
+	flag.String("env", server.Development, "server environment")
+	flag.Parse()
+	viper.BindPFlags(flag.CommandLine)
 }
 
 func main() {
@@ -43,6 +51,7 @@ func main() {
 
 	log.Println("initializing server...")
 	serv, err := server.NewServer(
+		viper.GetString("env"),
 		viper.GetString("K_SERVICE"),
 		viper.GetString("SPOTIFY_CLIENT_ID"),
 		viper.GetString("SPOTIFY_CLIENT_SECRET"),
@@ -56,7 +65,7 @@ func main() {
 
 	pb.RegisterMusicResearcherServer(musicResearcherServer, serv)
 
-	log.Printf("listening on %s\n...", musicResearcherPort)
+	log.Printf("listening on %s...\n", musicResearcherPort)
 	if err := musicResearcherServer.Serve(lis); err != nil {
 		log.Fatal(err)
 	}
