@@ -4,7 +4,7 @@ steps:
   args:
     - 'build'
     - '-t'
-    - 'europe-west2-docker.pkg.dev/$PROJECT_ID/repo-docker/music-researcher:$COMMIT_SHA'
+    - ${_IMAGE_NAME}
     - '-f'
     - './build/Dockerfile'
     - '.'
@@ -13,20 +13,22 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args:
     - 'push'
-    - 'europe-west2-docker.pkg.dev/$PROJECT_ID/repo-docker/music-researcher:$COMMIT_SHA'
+    - ${_IMAGE_NAME}
 
 # Deploy new revision to Cloud Run
-- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  entrypoint: gcloud
+- name: 'gcr.io/cloud-builders/gcloud'
   args:
     - 'run'
     - 'deploy'
-    - 'music-researcher'
+    - ${_SERVICE_NAME}
     - '--image'
-    - 'europe-west2-docker.pkg.dev/$PROJECT_ID/repo-docker/music-researcher:$COMMIT_SHA'
+    - ${_IMAGE_NAME}
     - '--region'
     - 'europe-west1'
 
-images:
-- 'europe-west2-docker.pkg.dev/$PROJECT_ID/repo-docker/music-researcher:$COMMIT_SHA'
+substitutions:
+  _SERVICE_NAME: 'music-researcher'
+  _IMAGE_NAME: 'europe-west2-docker.pkg.dev/${PROJECT_ID}/repo-docker/music-researcher:${COMMIT_SHA}'
 
+options:
+  dynamic_substitutions: true

@@ -37,7 +37,9 @@ func (s *Server) listArtistsFromTrack(ctx context.Context, track spotify.FullTra
 	return out, nil
 }
 
-func (s *Server) pagesToTrackList(ctx context.Context, pages *spotify.FullTrackPage) ([]*pb.Track, error) {
+func (s *Server) pagesToTrackList(
+	ctx context.Context, pages *spotify.FullTrackPage) ([]*pb.Track, error) {
+
 	var trackList = make([]*pb.Track, 0)
 	var artistBufferList = make([]spotify.FullArtist, 0)
 
@@ -68,20 +70,32 @@ func (s *Server) Search(ctx context.Context, params *pb.Parameters) (*pb.Results
 		return nil, err
 	}
 
+	// query
 	query := params.Query
-	queryWithFilters := query
+	if query == "" {
+		return nil, fmt.Errorf("query parameter is empty")
+	}
 
+	// genre list
+	// if genre list supplied, add genre filters to the query
 	if len(params.GenreFilters) > 0 {
 		genreFilters := ""
 		for _, genre := range params.GenreFilters {
 			genreFilters = fmt.Sprintf("%s genre:%s", genreFilters, genre)
 		}
-		queryWithFilters = fmt.Sprintf("%s %s", query, genreFilters)
+		query = fmt.Sprintf("%s %s", query, genreFilters)
 	}
-	log.Printf("requesting Spotify with query: %s", queryWithFilters)
 
+	// limit
+	const defaultLimit = 10
 	limit := int(params.Limit)
-	searchResult, err := s.spotifyClient.Search(ctx, queryWithFilters, spotify.SearchTypeTrack, spotify.Limit(limit))
+	if limit <= 0 {
+		limit = defaultLimit
+	}
+
+	log.Printf("requesting Spotify with query: %s", query)
+	searchResult, err := s.spotifyClient.Search(
+		ctx, query, spotify.SearchTypeTrack, spotify.Limit(limit))
 	if err != nil {
 		s.errorReport(err, "failed interacting with Spotify")
 		return nil, err

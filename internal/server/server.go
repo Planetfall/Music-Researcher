@@ -41,8 +41,13 @@ func (s *Server) errorReport(err error, message string) {
 }
 
 func (s *Server) Close() {
-	s.secretManager.Close()
-	s.errorReporting.Close()
+	if s.secretManager != nil {
+		s.secretManager.Close()
+	}
+
+	if s.errorReporting != nil {
+		s.errorReporting.Close()
+	}
 }
 
 func NewServer(
