@@ -9,8 +9,9 @@ import (
 	"github.com/zmb3/spotify/v2"
 )
 
-func (s *Server) listArtistsFromTrack(ctx context.Context, track spotify.FullTrack,
-	artistBufferList []spotify.FullArtist) ([]spotify.FullArtist, error) {
+func (s *Server) listArtistsFromTrack(ctx context.Context,
+	track spotify.FullTrack, artistBufferList []spotify.FullArtist,
+) ([]spotify.FullArtist, error) {
 
 	out := make([]spotify.FullArtist, 0)
 	for _, artist := range track.Artists {
@@ -54,7 +55,8 @@ func (s *Server) pagesToTrackList(
 			trackList = append(trackList, track)
 		}
 
-		if err := s.spotifyClient.NextPage(ctx, pages); err == spotify.ErrNoMorePages {
+		if err := s.spotifyClient.NextPage(
+			ctx, pages); err == spotify.ErrNoMorePages {
 			break
 		}
 	}

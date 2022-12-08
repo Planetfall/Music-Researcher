@@ -35,28 +35,31 @@ message Results {
 }
 
 message Artist {
-    string name = 1;
-    string spotifyUrl = 2;
-    string imageUrl = 3;
-    repeated string  genres = 4;
+    string ID = 1;
+    string name = 2;
+    string spotifyUrl = 3;
+    string imageUrl = 4;
+    repeated string  genres = 5;
 }
 
 message Album {
-    string name = 1;
-    string spotifyUrl = 2;
-    string imageUrl = 3;
-    string releaseDate = 4;
+    string ID = 1;
+    string name = 2;
+    string spotifyUrl = 3;
+    string imageUrl = 4;
+    string releaseDate = 5;
 }
 
 message Track {
-    string name = 1;
-    string spotifyUrl = 2;
+    string ID = 1;
+    string name = 2;
+    string spotifyUrl = 3;
 
-    Album album = 3;
-    repeated Artist artists = 4;
+    Album album = 4;
+    repeated Artist artists = 5;
 
-    int32 durationMs = 5;
-    string previewUrl = 6;
-    int32 popularity = 7;    
+    int32 durationMs = 6;
+    string previewUrl = 7;
+    int32 popularity = 8;    
 }
 

@@ -32,6 +32,7 @@ func (s *Server) getImageUrl(images []spotify.Image, itemType pb.Type) string {
 
 func (s *Server) newTrack(track spotify.FullTrack, artistList []spotify.FullArtist) *pb.Track {
 	albumDto := &pb.Album{
+		ID:          track.Album.ID.String(),
 		Name:        track.Album.Name,
 		ReleaseDate: track.Album.ReleaseDate,
 		SpotifyUrl:  track.Album.ExternalURLs[spotifyUrlKey],
@@ -41,6 +42,7 @@ func (s *Server) newTrack(track spotify.FullTrack, artistList []spotify.FullArti
 	artistDtoList := make([]*pb.Artist, 0)
 	for _, artist := range artistList {
 		artistDtoList = append(artistDtoList, &pb.Artist{
+			ID:         artist.ID.String(),
 			Name:       artist.Name,
 			SpotifyUrl: artist.ExternalURLs[spotifyUrlKey],
 			Genres:     artist.Genres,
@@ -49,6 +51,7 @@ func (s *Server) newTrack(track spotify.FullTrack, artistList []spotify.FullArti
 	}
 
 	trackDto := &pb.Track{
+		ID:         track.ID.String(),
 		Name:       track.Name,
 		SpotifyUrl: track.ExternalURLs[spotifyUrlKey],
 		DurationMs: int32(track.Duration),
