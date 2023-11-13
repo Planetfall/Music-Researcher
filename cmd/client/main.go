@@ -8,9 +8,10 @@ import (
 	"log"
 	"time"
 
-	pb "github.com/Dadard29/planetfall/musicresearcher/pkg/pb"
+	pb "github.com/planetfall/genproto/pkg/musicresearcher/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 var query = flag.String("query", "chilly gonzales", "The query to send")
@@ -36,7 +37,8 @@ func main() {
 
 		opts = append(opts, grpc.WithTransportCredentials(cred))
 	} else {
-		opts = append(opts, grpc.WithInsecure())
+		opts = append(opts,
+			grpc.WithTransportCredentials(insecure.NewCredentials()))
 	}
 
 	conn, err := grpc.Dial(*host, opts...)

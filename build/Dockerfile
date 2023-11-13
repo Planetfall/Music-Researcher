@@ -1,6 +1,4 @@
-FROM golang:1.18-alpine
-
-ENV APP_ENV=production
+FROM golang:1.21-alpine
 
 WORKDIR /usr/src/app
 
@@ -11,6 +9,4 @@ RUN apk add git
 COPY . .
 RUN go build -v -o /usr/local/bin/app ./cmd/server
 
-RUN echo $APP_ENV
-
-CMD app --env ${APP_ENV}
+CMD app
