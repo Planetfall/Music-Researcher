@@ -2,6 +2,7 @@ package myspotify
 
 import (
 	"context"
+	"fmt"
 
 	pb "github.com/planetfall/genproto/pkg/musicresearcher/v1"
 	"github.com/zmb3/spotify/v2"
@@ -69,28 +70,30 @@ func mapSpotifyTrack(track spotify.FullTrack, artistList []spotify.FullArtist) *
 
 // lists the full artists metadatas from a full spotify trac
 func (s *MySpotifyImpl) listArtistsFromTrack(ctx context.Context,
-	track spotify.FullTrack, artistBufferList []spotify.FullArtist,
+	track spotify.FullTrack, artistBufferList *[]spotify.FullArtist,
 ) ([]spotify.FullArtist, error) {
 
 	out := make([]spotify.FullArtist, 0)
 	for _, artist := range track.Artists {
 		// check if track artist already in buffer
 		inBuffer := false
-		for _, artistBuffer := range artistBufferList {
-			if artist.ID == artistBuffer.ID {
+		for _, artistInBuffer := range *artistBufferList {
+			if artist.ID == artistInBuffer.ID {
 				// store it in buffer, to avoid requesting it again
-				out = append(out, artistBuffer)
+				out = append(out, artistInBuffer)
 				inBuffer = true
 			}
 		}
 
 		// if not, request the artist from API
 		if !inBuffer {
-			artistBuffer, err := s.client.GetArtist(ctx, artist.ID)
+			artist, err := s.client.GetArtist(ctx, artist.ID)
 			if err != nil {
-				return nil, err
+				return nil, fmt.Errorf("client.GetArtist: %v", err)
 			}
-			out = append(out, *artistBuffer)
+			out = append(out, *artist)
+			*artistBufferList = append(*artistBufferList, *artist)
+
 		}
 	}
 
@@ -107,7 +110,7 @@ func (s *MySpotifyImpl) pagesToTrackList(
 
 	for {
 		for _, track := range pages.Tracks {
-			artistList, err := s.listArtistsFromTrack(ctx, track, artistBufferList)
+			artistList, err := s.listArtistsFromTrack(ctx, track, &artistBufferList)
 			if err != nil {
 				return nil, err
 			}

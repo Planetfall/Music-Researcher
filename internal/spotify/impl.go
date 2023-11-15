@@ -59,7 +59,7 @@ func (s *MySpotifyImpl) refresh(ctx context.Context) error {
 
 	client, expiryTime, err := s.provider.NewClient(ctx, s.clientId, s.clientSecret)
 	if err != nil {
-		return fmt.Errorf("spotify.refresh: %v", err)
+		return fmt.Errorf("provider.NewClient: %v", err)
 	}
 
 	s.client = client
