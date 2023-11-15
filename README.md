@@ -35,3 +35,43 @@ Run the client
 ```
 go run ./cmd/client/main.go --host localhost:8080 --tls=false
 ```
+
+## Tests
+
+Run the tests
+```
+go test ./...
+```
+
+Run the tests with coverage
+```
+go test -v -race -covermode=atomic -coverprofile=coverage.out ./...
+```
+
+Print the coverage in HTML
+```
+go tool cover -html=coverage.out
+```
+
+## Lint
+
+Report card
+```
+goreportcard-cli
+```
+
+Golang Lint
+```
+golangci-lint run
+```
+
+## Release
+
+```
+go mod tidy
+go test ./...
+git commit -m "release"
+git tag v0.1.0
+git push origin v0.1.0
+GOPROXY=proxy.golang.org go list -m github.com/planetfall/gateway@v0.1.0
+```
