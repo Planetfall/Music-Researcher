@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "github.com/Dadard29/music-researcher/musicresearcher";
+option go_package = "github.com/planetfall/genproto/pkg/musicresearcher/v1";
 
 package musicresearcher;
 

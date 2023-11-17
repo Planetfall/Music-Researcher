@@ -73,5 +73,5 @@ go test ./...
 git commit -m "release"
 git tag v0.1.0
 git push origin v0.1.0
-GOPROXY=proxy.golang.org go list -m github.com/planetfall/gateway@v0.1.0
+GOPROXY=proxy.golang.org go list -m github.com/planetfall/music-researcher@v0.1.0
 ```
